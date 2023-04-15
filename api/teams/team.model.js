@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
-const usersSchema = Schema(
+const teamSchema = Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    urt_auth: {
+    tag: {
       type: String,
       required: true,
     },
@@ -15,16 +15,16 @@ const usersSchema = Schema(
       type: String,
       required: true,
     },
-    discord_id: {
-      type: Number,
-      required: true,
+    captain: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    teams: [
+    members: [
       {
-        team: {
+        user: {
           type: Schema.Types.ObjectId,
           required: true,
-          ref: "teams",
+          ref: "User",
         },
         is_active: {
           type: Boolean,
@@ -33,19 +33,37 @@ const usersSchema = Schema(
         role: {
           type: Object,
           enum: ["admin", "member", "invited"],
-          default: "member",
+          default: "invited",
         },
         joined_at: {
           type: Date,
           required: true,
-          default: Date.now(),
+          default: Date.now,
         },
       },
     ],
+    discord: {
+      roster_message_id: {
+        type: Number,
+      },
+      role_id: {
+        type: Number,
+      },
+    },
+    discord_link: {
+      type: String,
+    },
+    ftw_id: {
+      type: Number,
+    },
+    is_national_team: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("users", usersSchema);
+export default mongoose.model("Team", teamSchema);

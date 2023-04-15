@@ -1,18 +1,12 @@
 import express from "express";
 import bodyParser from "body-parser";
 import connectDB from "./config/db";
-import { router } from "./api/router";
+import router from "./api/router";
 
 // DB connection
 connectDB();
 
 const app = express();
-
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.use(bodyParser.json());
 
 // Security ??
 const apiKey = "123";

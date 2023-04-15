@@ -1,16 +1,19 @@
-import { teamsService } from "./teams.service";
-import lodash from "lodash";
+import {} from "./team.service";
+import { index, show } from "../../utils/services/services";
+import Team from "./team.model";
 import { searchMaker } from "../helpers";
 
+import lodash from "lodash";
 const _ = lodash;
 
-const findAll = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const fields = ["name", "tag", "captain", "ftw_id", "is_national_team", "discord_link", "createdAt", "updatedAt"];
     const options = _.pick(req.query, ["limit", "page", "sortBy", "sortSens", "include_members", "include_discord"]);
     const search = searchMaker(req.query.search, ["name", "tag"]);
     const filters = _.pick(req.query, ["name", "tag", "is_national_team", "country"]);
     const populate = [];
+
     if (options.include_members == "true") {
       fields.push("members");
       populate.push({ id: "members.user", fields: ["pseudo", "urt_auth", "country"] });
@@ -19,7 +22,7 @@ const findAll = async (req, res) => {
       fields.push("discord");
     }
 
-    const datas = await teamsService.index(fields, populate, options, filters, search);
+    const datas = await index(Team, fields, populate, options, filters, search);
 
     res.status(200).json({
       result: "success",
@@ -35,7 +38,7 @@ const findAll = async (req, res) => {
   }
 };
 
-const findOneById = async (req, res) => {
+export const get = async (req, res) => {
   try {
     const id = req.params.id;
     const fields = ["name", "tag", "country", "captain", "members", "ftw_id", "discord_link", "is_national_team", "createdAt", "updatedAt"];
@@ -45,7 +48,7 @@ const findOneById = async (req, res) => {
       fields.push("discord");
     }
 
-    const team = await teamsService.show(id, fields, populate, options);
+    const team = await show(Team, id, fields, populate, options);
 
     if (team == null) {
       res.status(404).json({
@@ -66,5 +69,3 @@ const findOneById = async (req, res) => {
     });
   }
 };
-
-module.exports = { findAll, findOneById };

@@ -1,4 +1,4 @@
-const searchMaker = (search, fields) => {
+export const searchMaker = (search, fields) => {
   if (typeof search === "undefined") {
     return {};
   }
@@ -17,5 +17,3 @@ const searchMaker = (search, fields) => {
 
   return searchFilter;
 };
-
-module.exports = { searchMaker };

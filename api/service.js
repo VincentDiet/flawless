@@ -27,12 +27,12 @@ module.exports = class {
   static async show(id, fields, populate) {
     const data = this.model.findById(id, fields);
 
-    // POPULATE
-    // if (populate.length > 0) {
-    //   populate.forEach((el) => {
-    //     data.populate(el.id, el.fields);
-    //   });
-    // }
+    POPULATE
+    if (populate.length > 0) {
+      populate.forEach((el) => {
+        data.populate(el.id, el.fields);
+      });
+    }
 
     return await data;
   }

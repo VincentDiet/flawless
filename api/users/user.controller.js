@@ -1,10 +1,14 @@
-import { usersService } from "./users.service";
-import lodash from "lodash";
+import User from "./user.model";
+
+import {} from "./user.service";
+import { index, show } from "../../utils/services/services";
+
 import { searchMaker } from "../helpers";
 
+import lodash from "lodash";
 const _ = lodash;
 
-const findAll = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const fields = ["discord_id", "urt_auth", "name", "country", "createdAt", "updatedAt"];
     const options = _.pick(req.query, ["limit", "page", "sortBy", "sortSens", "include_teams"]);
@@ -16,7 +20,7 @@ const findAll = async (req, res) => {
       populate.push({ id: "teams.team", fields: ["name", "tag", "country", "is_national_team"] });
     }
 
-    const datas = await usersService.index(fields, populate, options, filters, search);
+    const datas = await index(User, fields, populate, options, filters, search);
 
     res.status(200).json({
       result: "success",
@@ -32,14 +36,14 @@ const findAll = async (req, res) => {
   }
 };
 
-const findOneById = async (req, res) => {
+export const get = async (req, res) => {
   try {
     const id = req.params.id;
     const fields = ["discord_id", "urt_auth", "name", "country", "createdAt", "updatedAt", "teams"];
     const options = _.pick(req.query, []);
     const populate = [{ id: "teams.team", fields: ["name", "tag", "country", "is_national_team"] }];
 
-    const user = await usersService.show(id, fields, populate, options);
+    const user = await show(User, id, fields, populate, options);
 
     if (user == null) {
       res.status(404).json({
@@ -60,5 +64,3 @@ const findOneById = async (req, res) => {
     });
   }
 };
-
-module.exports = { findAll, findOneById };
