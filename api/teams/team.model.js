@@ -52,6 +52,7 @@ const teamSchema = Schema(
     },
     discord_link: {
       type: String,
+      default: null,
     },
     ftw_id: {
       type: Number,
@@ -65,5 +66,39 @@ const teamSchema = Schema(
     timestamps: true,
   }
 );
+
+teamSchema.methods.addMember = async function (memberId, role) {
+  const memberExists = this.members.some((member) => member.user.equals(memberId));
+  if (memberExists) {
+    throw new Error("This player is already in the team or is already invited");
+  }
+  this.members.push({ user: memberId, role });
+};
+
+teamSchema.methods.removeMember = async function (memberId) {
+  const memberExists = this.members.some((member) => member.user.equals(memberId));
+  if (!memberExists) {
+    throw new Error("This player is not in this team.");
+  }
+  if (this.captain.equals(memberId)) {
+    throw new Error("The captain cannot leave the team.");
+  }
+  this.members = this.members.filter((member) => !member.user.equals(memberId));
+};
+
+teamSchema.methods.updateMember = async function (memberId, role, is_active) {
+  const memberExists = this.members.some((member) => member.user.equals(memberId));
+  if (!memberExists) {
+    throw new Error("This player is not in this team.");
+  }
+  if (typeof this.captain === "object" && this.captain !== null && this.captain.equals(memberId)) {
+    if (role !== "admin" && role !== undefined) {
+      throw new Error("You cannot remove admin's role from team's captain.");
+    }
+  }
+  const user = this.members.find((member) => member.user.equals(memberId));
+  user.role = role || user.role;
+  user.is_active = is_active || user.is_active;
+};
 
 export default mongoose.model("Team", teamSchema);

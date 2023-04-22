@@ -48,4 +48,30 @@ const userSchema = Schema(
   }
 );
 
+userSchema.methods.addTeam = async function (teamId, role) {
+  const teamExists = this.teams.some((team) => team.team.equals(teamId));
+  if (teamExists) {
+    throw new Error("This player is already in the team or is already invited");
+  }
+  this.teams.push({ team: teamId, role });
+};
+
+userSchema.methods.removeTeam = async function (teamId) {
+  const teamExists = this.teams.some((team) => team.team.equals(teamId));
+  if (!teamExists) {
+    throw new Error("This player is not in this team.");
+  }
+  this.teams = this.teams.filter((team) => !team.team.equals(teamId));
+};
+
+userSchema.methods.updateTeam = async function (teamId, role, is_active) {
+  const teamExists = this.teams.some((team) => team.team.equals(teamId));
+  if (!teamExists) {
+    throw new Error("This player is not in this team.");
+  }
+  const team = this.teams.find((team) => team.team.equals(teamId));
+  team.role = role || team.role;
+  team.is_active = is_active || team.is_active;
+};
+
 export default mongoose.model("User", userSchema);

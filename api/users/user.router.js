@@ -1,9 +1,13 @@
 import express from "express";
-import { get, getAll } from "./user.controller";
+
+import {} from "./user.controller";
+
+import { GET_ALL_CONFIG, GET_CONFIG } from "./user.config";
+import User from "./user.model";
 
 const userRouter = express.Router();
 
-userRouter.get("/", getAll);
-userRouter.get("/:id", get);
+//userRouter.get("/", _getAll(User, GET_ALL_CONFIG));
+//userRouter.get("/:id", get(User, GET_CONFIG));
 
 export default userRouter;
