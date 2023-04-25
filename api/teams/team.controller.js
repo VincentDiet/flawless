@@ -141,6 +141,8 @@ export const destroy = async (req, res, next) => {
   }
 };
 
+//
+
 export const addMember = async (req, res, next) => {
   try {
     const teamId = req.params.teamId;
